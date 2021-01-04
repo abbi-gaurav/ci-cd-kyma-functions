@@ -6,6 +6,6 @@
   },
   "scripts": {
     "test": "mocha",
-    "test-with-coverage": "nyc --reporter=text mocha --lines 90 --per-file"
+    "test-with-coverage": "nyc --reporter=lcov --reporter=text mocha --lines 90 --per-file"
   }
 }
