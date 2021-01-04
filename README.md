@@ -1,0 +1,1 @@
+![push-to-main](https://github.com/abbi-gaurav/ci-cd-kyma-functions/workflows/push-to-main/badge.svg)
