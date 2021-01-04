@@ -1,5 +1,5 @@
 module.exports = {
     main : async function (event, context) {
-        console.log(event.data);
+        console.log(JSON.stringify(event.data));
     }
 }
