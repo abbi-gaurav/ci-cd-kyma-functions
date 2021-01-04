@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "test-with-coverage": "nyc --reporter=text mocha --lines 90 --per-file"
+  }
+}
