@@ -1,16 +1,17 @@
 const { afterEach } = require('mocha');
+const redis = require("redis-mock")
+const client = redis.createClient();
+
 const nock = require('nock');
 const baseSite = process.env['BASE_SITE'];
 const gatewayURL = process.env['SAP_COMMERCE_CLOUD_COMMERCE_WEBSERVICES_D2E07775_87FA_43B5_923D_189459F0C934_GATEWAY_URL'];
 const rewiremock = require('rewiremock/node');
 const mockResponses = require('./mock-reponses');
 
-let fakeRedis = new Map();
 const overrides = {
     redis: {
         createClient() {
-            console.log('mocking create client');
-            return fakeRedis;
+            return client;
         }
     }
 };
