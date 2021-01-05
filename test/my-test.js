@@ -1,32 +1,54 @@
 const { afterEach } = require('mocha');
-const redis = require("redis-mock")
-const client = redis.createClient();
-
+const redisMock = require("redis-mock");
+//TODO: Use the mock redis instead of Map
+const mockRedisClient = redisMock.createClient();
+const fakeRedis = new Map();
 const nock = require('nock');
 const baseSite = process.env['BASE_SITE'];
-const gatewayURL = process.env['SAP_COMMERCE_CLOUD_COMMERCE_WEBSERVICES_D2E07775_87FA_43B5_923D_189459F0C934_GATEWAY_URL'];
 const rewiremock = require('rewiremock/node');
-const mockResponses = require('./mock-reponses');
+const utils = require('./utils');
+const { expect } = require('chai');
 
 const overrides = {
     redis: {
         createClient() {
-            return client;
+            console.log('create client');
+            return fakeRedis;
         }
     }
 };
-const myFunction = rewiremock.proxy('../triggers/order-created/handler',overrides);
 
+const myFunction = rewiremock.proxy('../triggers/order-created/handler', overrides);
 describe("Order created Trigger", () => {
     afterEach(nock.cleanAll);
     after(nock.restore);
     describe("handle event", () => {
         it("saves order data", async () => {
-            nock(gatewayURL)
-                .get(`/${baseSite}/orders/orderExists`)
-                .reply(200,mockResponses.orderExists);
             const orderCode = 'orderExists';
-            await myFunction.main({ "data": { "orderCode": orderCode } }, {});
+            nock("https://any.url", {
+                filteringScope: function (_scope) {
+                    return true;
+                }
+            })
+                .get(`/${baseSite}/orders/${orderCode}`)
+                .reply(200, utils.orderDetails);
+            const event = utils.createEvent(orderCode);
+            await myFunction.main(event, {});
+            expect(JSON.parse(fakeRedis.get(orderCode))).to.be.eql(utils.orderDetails);
+            expect(event.extensions.response.statusCode).to.be.eql(200);
         });
+        it('fails when oder data is not found', async () => {
+            const orderCode = 'orderDoesNotExist';
+            nock("https://any.url", {
+                filteringScope: function (_scope) {
+                    return true;
+                }
+            })
+                .get(`/${baseSite}/orders/${orderCode}`)
+                .reply(404);
+            const event = utils.createEvent(orderCode);
+            await myFunction.main(event, {})
+            expect(event.extensions.response.statusCode).to.be.eql(500);
+        })
     });
 });
