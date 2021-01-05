@@ -1,5 +1,8 @@
 {
     "name": "my-function",
     "version": "1.0.0",
-    "dependencies": {}
+    "dependencies": {
+        "axios": "^0.21.1",
+        "redis": "^3.0.2"
+    }
 }
