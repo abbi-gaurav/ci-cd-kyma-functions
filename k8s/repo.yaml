@@ -1,0 +1,6 @@
+apiVersion: serverless.kyma-project.io/v1alpha1
+kind: GitRepository
+metadata:
+  name: kyma-functions-repo
+spec:
+  url: "https://github.com/abbi-gaurav/ci-cd-kyma-functions.git"

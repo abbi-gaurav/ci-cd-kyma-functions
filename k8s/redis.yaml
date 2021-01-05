@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kyma-ci-cd-redis
+  name: kyma-ci-cd-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kyma-ci-cd-redis
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      creationTimestamp: null
+      labels:
+        app: kyma-ci-cd-redis
+    spec:
+      containers:
+      - image: redis:alpine
+        name: redis
+        resources: {}
+        ports:
+        - containerPort: 6379
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kyma-ci-cd-redis
+  name: kyma-ci-cd-redis
+spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: kyma-ci-cd-redis
+status:
+  loadBalancer: {}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: kyma-ci-cd-redis
+spec:
+  host: kyma-ci-cd-redis
+  trafficPolicy:
+    tls:
+      mode: DISABLE
