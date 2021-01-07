@@ -20,5 +20,15 @@ module.exports = {
                 response: httpMocks.createResponse()
             }
         }
+    },
+    createGetOrdersReq: function (orderCode) {
+        return {
+            extensions: {
+                request: {
+                    url: `https://my.orders.url/${orderCode}`
+                },
+                response: httpMocks.createResponse()
+            }
+        }
     }
 }

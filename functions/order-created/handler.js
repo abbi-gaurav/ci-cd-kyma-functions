@@ -13,7 +13,6 @@ module.exports = {
             redisClient.set(orderCode, JSON.stringify(orderData));
             event.extensions.response.status(200).send();
         }catch(error) {
-            console.log(error);
             event.extensions.response.status(500).send("Error");
         }
     }
