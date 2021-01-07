@@ -10,7 +10,7 @@ module.exports = {
             const orderString = await getAsync(orderCode);
             if (orderString == null || orderString == undefined || orderString === "") {
                 event.extensions.response.status(404).send("Order does not exist");
-                return
+                return;
             }else {
                 const order = JSON.parse(orderString);
                 return order;
