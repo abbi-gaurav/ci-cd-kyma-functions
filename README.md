@@ -41,6 +41,55 @@ One can set up a pipeline using one of the various CI tools avaialble (Jenkins, 
 
 - Standard nodejs frameworks mocha, chai are used for testing.
 
+The project/repository structure looks as below:
+
+```shell
+.
+├── coverage
+├── test
+├── functions
+├── node_modules
+├── package-lock.json
+├── package.json
+├── assets
+├── k8s
+└── README.md
+```
+
+`functions` contain all the Kyma functions implemented in nodejs12
+
+```shell
+functions
+├── get-orders
+│   ├── package.json
+│   └── handler.js
+└── order-created
+    ├── package.json
+    └── handler.js
+
+2 directories, 4 files
+```
+
+**Running the tests with coverage**
+
+`test` directort contains the tests
+
+To run the test locally,
+
+```shell
+BASE_SITE=electronics GATEWAY_URL=https://mock.commerce.gateway npm run test-with-coverage
+```
+
+The same has been incorporated into the  with [github actions](.github/workflows/main.yml).
+
+![github-action-run](assets/github-action-run.png)
+
+For a developer, creating a PR, the same checks are run and only after they pass, the changes can be merged to `main`. And with `Kyma GitRepository`, they are are automatically deployed to the Kyma runtime.
+
+![pr-checks](assets/pr-checks.png)
+
+## Deploying the sample
+
 ### Prerequisites
 
 - Commerce connected to the Kyma runtime. One can also set up the [mock](https://blogs.sap.com/2020/06/17/sap-cloud-platform-extension-factory-kyma-runtime-mock-applications/)
