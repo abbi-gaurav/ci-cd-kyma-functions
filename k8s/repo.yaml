@@ -3,4 +3,4 @@ kind: GitRepository
 metadata:
   name: kyma-functions-repo
 spec:
-  url: "https://github.com/abbi-gaurav/ci-cd-kyma-functions.git"
+  url: "https://github.com/abbi-gaurav/ci-cd-kyma-functions.git" #update the repo

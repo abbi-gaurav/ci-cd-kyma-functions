@@ -1,6 +1,7 @@
 const axios = require("axios");
 const BASE_SITE = process.env['BASE_SITE'];
-const OCC_API_URL = process.env['SAP_COMMERCE_CLOUD_COMMERCE_WEBSERVICES_D2E07775_87FA_43B5_923D_189459F0C934_GATEWAY_URL'];
+
+const OCC_API_URL = process.env['GATEWAY_URL'];
 var redis = require("redis"),
     redisClient = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST);
 

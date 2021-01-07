@@ -27,7 +27,7 @@ jobs:
       - name: npm test-with-coverage
         run: |
           npm install
-          BASE_SITE=electronics SAP_COMMERCE_CLOUD_COMMERCE_WEBSERVICES_D2E07775_87FA_43B5_923D_189459F0C934_GATEWAY_URL=https://mock.commerce.gateway npm run test-with-coverage
+          BASE_SITE=electronics GATEWAY_URL=https://mock.commerce.gateway npm run test-with-coverage
       - uses: codecov/codecov-action@v1.1.1
         if: github.event_name == 'push'
         with:

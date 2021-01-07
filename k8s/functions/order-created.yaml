@@ -7,14 +7,16 @@ spec:
   runtime: nodejs12
   source: kyma-functions-repo
   reference: main
-  baseDir: triggers/order-created
+  baseDir: functions/order-created
   env:
   - name: REDIS_HOST
     value: kyma-ci-cd-redis
   - name: REDIS_PORT
     value: "6379"
   - name: "BASE_SITE"
-    value: electronics
+    value: electronics #change it if you have different base site
+  - name: "GATEWAY_URL"
+    value: "$(SAP_COMMERCE_CLOUD_COMMERCE_WEBSERVICES_D2E07775_87FA_43B5_923D_189459F0C934_GATEWAY_URL)" #update the name as in your created credential
 ---
 apiVersion: eventing.knative.dev/v1alpha1
 kind: Trigger
@@ -25,7 +27,19 @@ spec:
   filter:
     attributes:
       eventtypeversion: v1
-      source: mp-gaurav-mock-commerce-3
+      source: mp-gaurav-mock-commerce-3 #change it to your connected system name as it appears in Kyma
       type: order.created
   subscriber:
-    uri: http://order-created-trigger.dev.svc.cluster.local:80/
+    uri: http://order-created-trigger
+---
+apiVersion: servicecatalog.kyma-project.io/v1alpha1
+kind: ServiceBindingUsage
+metadata:
+  name: order-created-commerce-3-occ
+spec:
+  serviceBindingRef:
+    name: thirsty-goldstine #name of the credential created in Service catalog for OCC API
+  usedBy:
+    kind: serverless-function
+    name: order-created-trigger
+status: {}
