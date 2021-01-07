@@ -55,58 +55,65 @@ To deploy the sample in your Kyma runtime
 - Fork this reposiroty.
 - Create up GitRepository object pointing to your forked repository. Update the [GitRepository](k8s/repo.yaml) file with your github repository.
 
-```yaml
-apiVersion: serverless.kyma-project.io/v1alpha1
-kind: GitRepository
-metadata:
-  name: kyma-functions-repo
-spec:
-  url: "https://github.com/abbi-gaurav/ci-cd-kyma-functions.git" #update the repo
-```
+    ```yaml
+    apiVersion: serverless.kyma-project.io/v1alpha1
+    kind: GitRepository
+    metadata:
+    name: kyma-functions-repo
+    spec:
+    url: "https://github.com/abbi-gaurav/ci-cd-kyma-functions.git" #update the repo
+    ```
 
-```shell
-kubectl -n development apply -f k8s/repo.yaml
-```
+    ```shell
+    kubectl -n development apply -f k8s/repo.yaml
+    ```
 
 - Create Redis DB. A redis DB deployed on Kyma is used fot this sample. Not recommended for productive scenarios. Use one of the Hyperscaler offerings via Kyma Broker Addons.
 
-```shell
-kubectl -n development apply -f k8s/redis.yaml
-```
+    ```shell
+    kubectl -n development apply -f k8s/redis.yaml
+    ```
 
-- Deploy the `order-created` function. Make the necessary changes in the [order-created yaml](k8s/functions/order-created.yaml)
+- Deploy the `order-created` function. Make the necessary changes in the [order-created yaml](k8s/functions/order-created.yaml
   - Update the `BASE_SITE` for your commerce cloud environment.
   - Update the connected system name as it appears in your Kyma runtime.
   - Update name of the credential created in Service catalog for OCC API
+  - Update the `GATEWAY_URL` value as in your created credentials.
 
-As you can see, the Kyma function refers to the git reposirory and directory path.
+  - As you can see, the Kyma function refers to the git reposirory and directory path.
 
-```yaml
-apiVersion: serverless.kyma-project.io/v1alpha1
-kind: Function
-metadata:
-  name: order-created-trigger
-spec:
-  type: git
-  runtime: nodejs12
-  source: kyma-functions-repo
-  reference: main
-  baseDir: functions/order-created
-  env:
-  - name: REDIS_HOST
-    value: kyma-ci-cd-redis
-  - name: REDIS_PORT
-    value: "6379"
-  - name: "BASE_SITE"
-    value: electronics #change it if you have different base site
-```
+    ```yaml
+    apiVersion: serverless.kyma-project.io/v1alpha1
+    kind: Function
+    metadata:
+    name: order-created-trigger
+    spec:
+    type: git
+    runtime: nodejs12
+    source: kyma-functions-repo
+    reference: main
+    baseDir: functions/order-created
+    env:
+    - name: REDIS_HOST
+        value: kyma-ci-cd-redis
+    - name: REDIS_PORT
+        value: "6379"
+    - name: "BASE_SITE"
+        value: electronics #change it if you have different base site
+    - name: "GATEWAY_URL"
+        value: "$(SAP_COMMERCE_CLOUD_COMMERCE_WEBSERVICES_D2E07775_87FA_43B5_923D_189459F0C934_GATEWAY_URL)" #update the name as in your created credential
+    ```
 
-Deploy the function
+  - Deploy the function
 
-```shell
-kubectl -n development apply -f k8s/functions
-```
+    ```shell
+    kubectl -n development apply -f k8s/functions/order-created.yaml
+    ```
+  
+  - It also creates a `ServiceBindingUsage` to use the service instance credentials and an `Event Trigger` for order-created event.
 
-- ServcieBinding
-- Event Trigger
-- API Rule
+- Deploy the `get-orders` fucntion as well as the API rule to expose it over internet. It has similiar function defintion.
+
+    ```shell
+    kubectl -n development apply -f k8s/functions/order-created.yaml
+    ```
